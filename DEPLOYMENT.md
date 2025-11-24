@@ -1,103 +1,148 @@
 # Deployment Guide
 
-## Frontend Deployment (Vercel)
-
-### Steps:
-1. Push your code to GitHub
-2. Go to [vercel.com](https://vercel.com)
-3. Click "New Project"
-4. Import your GitHub repository
-5. Configure:
-   - **Framework Preset**: Vite
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-6. Click "Deploy"
-
-### Environment Variables (if needed):
-- `VITE_API_URL`: Your backend URL (e.g., https://your-backend.onrender.com)
+This guide will help you deploy your portfolio application with the backend on Render and the frontend on Netlify.
 
 ---
 
 ## Backend Deployment (Render)
 
-### Steps:
-1. Push your code to GitHub
-2. Go to [render.com](https://render.com)
-3. Click "New +"  → "Web Service"
-4. Connect your GitHub repository
-5. Configure:
-   - **Name**: portfolio-backend
+### Environment Variables
+
+Add these environment variables in your Render dashboard:
+
+```
+MONGO_URI=<your-mongodb-connection-string>
+JWT_SECRET=<your-jwt-secret-key>
+CLOUDINARY_CLOUD_NAME=dw6jnhryf
+CLOUDINARY_API_KEY=669427922973679
+CLOUDINARY_API_SECRET=q8ADJoT2_RudmivwXC-NxzlKEPM
+PORT=5000
+```
+
+> [!IMPORTANT]
+> Replace `<your-mongodb-connection-string>` with your MongoDB Atlas connection string.
+> Replace `<your-jwt-secret-key>` with a secure random string (e.g., generate one using `openssl rand -base64 32`).
+
+### Deployment Steps
+
+1. **Create a Render Account**
+   - Go to [render.com](https://render.com) and sign up/login
+
+2. **Create a New Web Service**
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository: `Gaganabm30/Gportfolio`
+
+3. **Configure the Service**
+   - **Name**: `gportfolio-backend` (or any name you prefer)
+   - **Region**: Choose the closest to your users
+   - **Branch**: `main`
    - **Root Directory**: `backend`
-   - **Runtime**: Node
+   - **Runtime**: `Node`
    - **Build Command**: `npm install`
-   - **Start Command**: `node server.js`
-6. Add Environment Variables:
-   - `MONGO_URI`: Your MongoDB Atlas connection string
-   - `JWT_SECRET`: Any secure random string
-   - `PORT`: 5000
-7. Click "Create Web Service"
+   - **Start Command**: `npm start`
+   - **Instance Type**: Free (or paid if you need more resources)
+
+4. **Add Environment Variables**
+   - In the "Environment" section, add all the variables listed above
+
+5. **Deploy**
+   - Click "Create Web Service"
+   - Wait for the deployment to complete (usually 2-5 minutes)
+   - Copy your backend URL (e.g., `https://gportfolio-backend.onrender.com`)
 
 ---
 
-## Database Setup (MongoDB Atlas)
+## Frontend Deployment (Netlify)
 
-### Steps:
-1. Go to [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
-2. Create free account
-3. Create a new cluster (free tier)
-4. Click "Connect"
-5. Add your current IP address (or 0.0.0.0/0 for all IPs)
-6. Create database user with username and password
-7. Get connection string
-8. Replace `<password>` with your database password
-9. Add to backend `.env` as `MONGO_URI`
+### Environment Variables
 
-Example:
+Create a `.env.production` file in the `frontend` directory with:
+
 ```
-mongodb+srv://admin:yourpassword@cluster0.mongodb.net/portfolio?retryWrites=true&w=majority
+VITE_API_URL=<your-render-backend-url>
 ```
 
----
+> [!IMPORTANT]
+> Replace `<your-render-backend-url>` with the URL from Render (e.g., `https://gportfolio-backend.onrender.com`).
 
-## Alternative Deployment Options
+### Deployment Steps
 
-### Backend
-- **Railway**: Similar to Render, auto-deploys from GitHub
-- **Heroku**: Classic PaaS (paid plans)
-- **DigitalOcean App Platform**: Simple deployment
+1. **Create a Netlify Account**
+   - Go to [netlify.com](https://netlify.com) and sign up/login
 
-### Frontend
-- **Netlify**: Alternative to Vercel
-- **GitHub Pages**: For static sites (requires changes)
-- **Cloudflare Pages**: Fast CDN deployment
+2. **Create a New Site**
+   - Click "Add new site" → "Import an existing project"
+   - Choose "Deploy with GitHub"
+   - Authorize Netlify to access your GitHub account
+   - Select your repository: `Gaganabm30/Gportfolio`
+
+3. **Configure Build Settings**
+   - **Branch to deploy**: `main`
+   - **Base directory**: `frontend`
+   - **Build command**: `npm run build`
+   - **Publish directory**: `frontend/dist`
+
+4. **Add Environment Variables**
+   - Go to "Site settings" → "Environment variables"
+   - Add `VITE_API_URL` with your Render backend URL
+
+5. **Deploy**
+   - Click "Deploy site"
+   - Wait for the build to complete (usually 1-3 minutes)
+   - Your site will be live at a Netlify URL (e.g., `https://your-site-name.netlify.app`)
+
+6. **Update Backend CORS** (Important!)
+   - Go back to your Render dashboard
+   - Add a new environment variable:
+     ```
+     FRONTEND_URL=<your-netlify-url>
+     ```
+   - Update `backend/server.js` to use this in CORS configuration (if not already done)
 
 ---
 
 ## Post-Deployment Checklist
 
-- [ ] Backend responds at your domain
-- [ ] Frontend loads correctly
-- [ ] Can log into admin panel
-- [ ] CRUD operations work
-- [ ] Contact form sends messages
-- [ ] All images load properly
-- [ ] Mobile responsive design works
-- [ ] Social links work
-- [ ] Resume downloads
+- [ ] Backend is running on Render
+- [ ] Frontend is deployed on Netlify
+- [ ] Environment variables are set correctly on both platforms
+- [ ] MongoDB connection is working
+- [ ] Cloudinary uploads are working
+- [ ] Admin login is functional
+- [ ] All pages load correctly
+- [ ] Contact form sends emails
 
 ---
 
-## Updating After Deployment
+## Troubleshooting
 
-### Frontend:
-Push to GitHub → Vercel auto-deploys
+### Backend Issues
+- **MongoDB Connection Failed**: Check your `MONGO_URI` and ensure your IP is whitelisted in MongoDB Atlas
+- **Cloudinary Upload Failed**: Verify your Cloudinary credentials
+- **Server Not Starting**: Check Render logs for errors
 
-### Backend:
-Push to GitHub → Render auto-deploys
+### Frontend Issues
+- **API Calls Failing**: Ensure `VITE_API_URL` is set correctly and CORS is configured
+- **Build Failed**: Check Netlify build logs for errors
+- **Blank Page**: Check browser console for errors
 
-### Manual Updates:
-Use the admin dashboard to update:
-- Projects
-- Skills
-- Achievements
+---
+
+## Custom Domain (Optional)
+
+### Netlify
+1. Go to "Domain settings" in Netlify
+2. Click "Add custom domain"
+3. Follow the instructions to configure your DNS
+
+### Render
+1. Go to "Settings" → "Custom Domain"
+2. Add your domain and configure DNS as instructed
+
+---
+
+## Notes
+
+- Render's free tier may spin down after inactivity. The first request after inactivity may take 30-60 seconds.
+- Netlify's free tier includes 100GB bandwidth per month.
+- Always use HTTPS URLs for production.
