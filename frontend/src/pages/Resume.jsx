@@ -25,9 +25,6 @@ const Resume = () => {
                             title="Resume"
                             className="resume-iframe"
                         />
-                        <p className="resume-note">
-                            Place your <code>resume.pdf</code> in the <code>frontend/public/</code> folder
-                        </p>
                     </div>
                     <a
                         href="/resume.pdf"

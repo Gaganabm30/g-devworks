@@ -1,6 +1,8 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaLock, FaUserShield, FaKey, FaCog, FaDatabase, FaServer } from 'react-icons/fa';
 import AuthContext from '../context/AuthContext';
+import BackgroundAnimation from '../components/BackgroundAnimation';
 import './AdminLogin.css';
 
 const AdminLogin = () => {
@@ -19,13 +21,25 @@ const AdminLogin = () => {
         if (result.success) {
             navigate('/admin/dashboard');
         } else {
-            setError(result.message);
+            // Display the specific error message from the backend or network
+            setError(result.message || 'Login failed. Please check console for details.');
+            console.error('Login failed result:', result);
         }
     };
 
+    const floatingIcons = [
+        { Icon: FaLock, delay: 0, position: { top: '15%', left: '10%' } },
+        { Icon: FaUserShield, delay: 0.2, position: { top: '25%', right: '15%' } },
+        { Icon: FaKey, delay: 0.4, position: { bottom: '20%', left: '12%' } },
+        { Icon: FaCog, delay: 0.6, position: { top: '60%', right: '10%' } },
+        { Icon: FaDatabase, delay: 0.8, position: { bottom: '30%', right: '20%' } },
+        { Icon: FaServer, delay: 1, position: { top: '40%', left: '8%' } },
+    ];
+
     return (
         <div className="admin-login">
-            <div className="login-card card">
+            <BackgroundAnimation icons={floatingIcons} />
+            <div className="login-card card" style={{ position: 'relative', zIndex: 1 }}>
                 <h2>Admin Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">

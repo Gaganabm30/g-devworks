@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaCommentDots, FaUserEdit } from 'react-icons/fa';
 import api from '../api/axios';
+import BackgroundAnimation from '../components/BackgroundAnimation';
 import './Contact.css';
 
 const Contact = () => {
@@ -24,9 +26,19 @@ const Contact = () => {
         }
     };
 
+    const floatingIcons = [
+        { Icon: FaEnvelope, delay: 0, position: { top: '15%', left: '10%' } },
+        { Icon: FaPhone, delay: 0.2, position: { top: '25%', right: '15%' } },
+        { Icon: FaMapMarkerAlt, delay: 0.4, position: { bottom: '20%', left: '12%' } },
+        { Icon: FaPaperPlane, delay: 0.6, position: { top: '60%', right: '10%' } },
+        { Icon: FaCommentDots, delay: 0.8, position: { bottom: '30%', right: '20%' } },
+        { Icon: FaUserEdit, delay: 1, position: { top: '40%', left: '8%' } },
+    ];
+
     return (
         <div className="contact">
-            <div className="container">
+            <BackgroundAnimation icons={floatingIcons} />
+            <div className="container" style={{ position: 'relative', zIndex: 1 }}>
                 <motion.h1
                     className="section-title"
                     initial={{ opacity: 0 }}

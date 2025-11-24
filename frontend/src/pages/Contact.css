@@ -1,14 +1,3 @@
-.contact {
-    min-height: 100vh;
-    padding: 100px 0;
-    background: var(--bg-primary);
-}
-
-.contact-form-wrapper {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
 .contact-form {
     padding: 40px;
 }

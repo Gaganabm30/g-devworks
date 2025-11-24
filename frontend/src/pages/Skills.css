@@ -1,46 +1,32 @@
 .skills {
     min-height: 100vh;
     padding: 100px 0;
-    background: var(--bg-primary);
+    background: transparent;
     position: relative;
     overflow: hidden;
 }
 
-/* Animated Background - Same as Home Page */
-.skills::before {
-    content: '';
+.floating-symbols {
     position: absolute;
-    top: -10%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.5;
-    animation: float 8s ease-in-out infinite;
-    z-index: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
 }
 
-.skills::after {
-    content: '';
+.floating-symbol {
     position: absolute;
-    bottom: -10%;
-    left: -10%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.5;
-    animation: float 8s ease-in-out infinite;
-    animation-delay: 2s;
-    z-index: 0;
+    font-size: 2.5rem;
+    color: var(--text-muted);
+    opacity: 0.3;
+    filter: drop-shadow(0 0 5px currentColor);
 }
 
 .skills .container {
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 .skill-category {

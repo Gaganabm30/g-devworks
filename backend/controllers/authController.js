@@ -1,25 +1,30 @@
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
-};
 
 exports.loginUser = async (req, res) => {
     const { username, password } = req.body;
+    console.log('Login attempt for:', username);
     try {
         const user = await User.findOne({ username });
-        if (user && (await user.matchPassword(password))) {
+        if (!user) {
+            console.log('User not found');
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
+
+        const isMatch = await user.matchPassword(password);
+        console.log('Password match result:', isMatch);
+
+        if (isMatch) {
             res.json({
                 _id: user._id,
                 username: user.username,
-                token: generateToken(user._id)
+                isAdmin: true // Explicitly flag as admin for frontend logic if needed
             });
         } else {
             res.status(401).json({ message: 'Invalid username or password' });
         }
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ message: error.message });
     }
 };

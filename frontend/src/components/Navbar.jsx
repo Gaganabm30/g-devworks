@@ -21,6 +21,7 @@ const Navbar = () => {
                     <li className="nav-item"><Link to="/skills" onClick={toggleMenu}>Skills</Link></li>
                     <li className="nav-item"><Link to="/projects" onClick={toggleMenu}>Projects</Link></li>
                     <li className="nav-item"><Link to="/achievements" onClick={toggleMenu}>Achievements</Link></li>
+                    <li className="nav-item"><Link to="/resume" onClick={toggleMenu}>Resume</Link></li>
                     <li className="nav-item"><Link to="/contact" onClick={toggleMenu}>Contact</Link></li>
                     <li className="nav-item admin-item">
                         <Link to="/admin/login" onClick={toggleMenu} className="admin-link">

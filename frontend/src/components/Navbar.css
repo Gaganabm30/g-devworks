@@ -68,7 +68,7 @@
     text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
-/* Admin Link Styling */
+/* Admin Link Styling - Inherits from nav-item */
 .admin-item {
     margin-left: auto;
 }
@@ -77,21 +77,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 20px;
-    background: rgba(168, 85, 247, 0.2);
-    border: 1px solid var(--neon-purple);
-    border-radius: var(--radius-lg);
-    transition: var(--transition-normal);
-}
-
-.admin-link:hover {
-    background: rgba(168, 85, 247, 0.3);
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
-    transform: translateY(-2px);
-}
-
-.admin-link::before {
-    display: none;
 }
 
 .admin-link svg {

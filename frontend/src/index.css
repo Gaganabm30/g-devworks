@@ -1,37 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-  /* Futuristic Neon Color Palette */
-  --neon-cyan: #00f0ff;
-  --neon-magenta: #ff00ff;
-  --neon-purple: #a855f7;
-  --neon-blue: #3b82f6;
-  --neon-pink: #ec4899;
-  --neon-green: #10b981;
-  --neon-yellow: #fbbf24;
-  --neon-orange: #f97316;
+  /* Lighter/Pastel Neon Color Palette */
+  --neon-cyan: #70f7ff;
+  --neon-magenta: #ff80ff;
+  --neon-purple: #d8b4fe;
+  --neon-blue: #93c5fd;
+  --neon-pink: #f9a8d4;
+  --neon-green: #6ee7b7;
+  --neon-yellow: #fde047;
+  --neon-orange: #fdba74;
 
-  /* Gradient Combinations */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-neon: linear-gradient(135deg, #00f0ff 0%, #a855f7 50%, #ff00ff 100%);
-  --gradient-sunset: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  --gradient-ocean: linear-gradient(135deg, #2e3192 0%, #1bffff 100%);
-  --gradient-fire: linear-gradient(135deg, #f12711 0%, #f5af19 100%);
-  --gradient-cosmic: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+  /* Gradient Combinations - Softer */
+  --gradient-primary: linear-gradient(135deg, #a5b4fc 0%, #c084fc 100%);
+  --gradient-secondary: linear-gradient(135deg, #f9a8d4 0%, #fca5a5 100%);
+  --gradient-neon: linear-gradient(135deg, #70f7ff 0%, #d8b4fe 50%, #ff80ff 100%);
+  --gradient-sunset: linear-gradient(135deg, #fca5a5 0%, #fde047 100%);
+  --gradient-ocean: linear-gradient(135deg, #93c5fd 0%, #67e8f9 100%);
+  --gradient-fire: linear-gradient(135deg, #fca5a5 0%, #fdba74 100%);
+  --gradient-cosmic: linear-gradient(135deg, #c4b5fd 0%, #818cf8 100%);
 
-  /* Dark Theme Colors */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #13131a;
-  --bg-tertiary: #1a1a24;
+  /* Dark Theme Colors - Softer Dark */
+  --bg-primary: #1e1e2e;
+  /* Deep Indigo/Slate */
+  --bg-secondary: #252538;
+  --bg-tertiary: #2e2e42;
   --text-primary: #ffffff;
-  --text-secondary: #b4b4c8;
-  --text-muted: #6b6b7e;
+  --text-secondary: #e2e8f0;
+  --text-muted: #94a3b8;
 
   /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
   /* Spacing & Sizing */
   --radius-sm: 8px;
@@ -366,6 +367,112 @@ img {
 
 /* Selection */
 ::selection {
-  background: rgba(0, 240, 255, 0.3);
+  background: rgba(112, 247, 255, 0.3);
   color: var(--text-primary);
+}
+
+/* 3D Animations & Utilities */
+.perspective-container {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@keyframes float-3d {
+
+  0%,
+  100% {
+    transform: translateY(0) rotateX(0) rotateY(0);
+  }
+
+  25% {
+    transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  }
+
+  50% {
+    transform: translateY(-5px) rotateX(0) rotateY(0);
+  }
+
+  75% {
+    transform: translateY(-10px) rotateX(-5deg) rotateY(-5deg);
+  }
+}
+
+@keyframes mesh-rotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-float-3d {
+  animation: float-3d 6s ease-in-out infinite;
+}
+
+.bg-gradient-flow {
+  background-size: 200% 200%;
+  animation: gradient-flow 15s ease infinite;
+}
+
+/* Complex Animated Background */
+.bg-animated-light {
+  background: linear-gradient(-45deg,
+      #1e1e2e,
+      #2a2a3e,
+      #1e1e2e,
+      #2a2a3e);
+  background-size: 400% 400%;
+  animation: gradient-flow 15s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-animated-light::before,
+.bg-animated-light::after {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: float-3d 10s infinite ease-in-out;
+  z-index: 0;
+}
+
+.bg-animated-light::before {
+  background: var(--neon-cyan);
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.bg-animated-light::after {
+  background: var(--neon-purple);
+  bottom: -100px;
+  right: -100px;
+  animation-delay: -5s;
 }
