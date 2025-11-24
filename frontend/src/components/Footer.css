@@ -2,7 +2,7 @@
     background: var(--bg-secondary);
     border-top: 1px solid var(--glass-border);
     padding: 40px 0;
-    margin-top: auto;
+    width: 100%;
 }
 
 .footer-content {
@@ -84,13 +84,21 @@
 }
 
 @media (max-width: 768px) {
+    .footer {
+        padding: 20px 0;
+    }
+
     .footer-social {
         gap: 20px;
     }
 
     .footer-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1.4rem;
+    }
+
+    .footer-text {
+        font-size: 0.9rem;
     }
 }

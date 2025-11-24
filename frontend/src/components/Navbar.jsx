@@ -11,7 +11,9 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="container navbar-container">
-                <Link to="/" className="logo">Gagana B M</Link>
+                <Link to="/" className="logo">
+                    <img src="/logo.png" alt="Logo" className="navbar-logo" />
+                </Link>
                 <div className="menu-icon" onClick={toggleMenu}>
                     {isOpen ? <FaTimes /> : <FaBars />}
                 </div>
