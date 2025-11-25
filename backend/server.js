@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || '*',
+    origin: process.env.FRONTEND_URL || 'https://gportfolio-3.onrender.com',
     credentials: true,
     optionsSuccessStatus: 200
 };
