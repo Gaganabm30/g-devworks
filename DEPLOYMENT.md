@@ -50,6 +50,17 @@ PORT=5000
    - Wait for the deployment to complete (usually 2-5 minutes)
    - Copy your backend URL (e.g., `https://gportfolio-backend.onrender.com`)
 
+6. **Create Admin User** (CRITICAL!)
+   - After deployment completes, go to the "Shell" tab in your Render dashboard
+   - Run this command:
+     ```bash
+     node createAdmin.js
+     ```
+   - You should see: "Admin user created successfully!"
+   - This creates the admin user with credentials:
+     - Username: `gagugagana01@gmail.com`
+     - Password: `gagana12345`
+
 ---
 
 ## Frontend Deployment (Netlify)
