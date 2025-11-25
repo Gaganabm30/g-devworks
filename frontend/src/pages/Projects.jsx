@@ -59,7 +59,7 @@ const Projects = () => {
                             style={{ transformStyle: "preserve-3d" }}
                         >
                             <div className="project-image" style={{ transform: "translateZ(20px)" }}>
-                                <img src={project.image.startsWith('http') ? project.image : `https://gportfolio-2.onrender.com${project.image}`} alt={project.title} />
+                                <img src={project.image.startsWith('http') ? project.image : `https://gbackend-xeaj.onrender.com${project.image}`} alt={project.title} />
                             </div>
                             <div className="project-content" style={{ transform: "translateZ(30px)" }}>
                                 <h3>{project.title}</h3>

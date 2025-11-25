@@ -89,7 +89,7 @@ const Achievements = () => {
                         >
                             {achievement.image && (
                                 <div className="achievement-image" style={{ transform: "translateZ(20px)" }}>
-                                    <img src={achievement.image.startsWith('http') ? achievement.image : `https://gportfolio-2.onrender.com${achievement.image}`} alt={achievement.title} />
+                                    <img src={achievement.image.startsWith('http') ? achievement.image : `https://gbackend-xeaj.onrender.com${achievement.image}`} alt={achievement.title} />
                                 </div>
                             )}
                             <div className="achievement-content" style={{ transform: "translateZ(30px)" }}>

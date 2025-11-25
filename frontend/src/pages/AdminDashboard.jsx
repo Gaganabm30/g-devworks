@@ -211,7 +211,7 @@ const AdminDashboard = () => {
                             {item.image && (
                                 <div className="item-image" style={{ marginBottom: '1rem' }}>
                                     <img
-                                        src={item.image.startsWith('http') ? item.image : `https://gportfolio-2.onrender.com${item.image}`}
+                                        src={item.image.startsWith('http') ? item.image : `https://gbackend-xeaj.onrender.com${item.image}`}
                                         alt={item.title || item.name}
                                         style={{ maxWidth: '100px', borderRadius: '8px' }}
                                     />
