@@ -1,6 +1,7 @@
 [build]
   command = "npm run build"
   publish = "build"
+  environment = { NPM_FLAGS = "--legacy-peer-deps", CI = "false" }
 
 [dev]
   command = "npm start"
