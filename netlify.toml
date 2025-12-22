@@ -1,8 +1,10 @@
 [build]
-  base = "frontend"
-  command = "npm run build"
-  publish = "build"
-  environment = { NPM_FLAGS = "--legacy-peer-deps", CI = "false" }
+  command = "cd frontend && npm install --legacy-peer-deps && npm run build"
+  publish = "frontend/build"
+
+[build.environment]
+  CI = "false"
+  NPM_FLAGS = "--legacy-peer-deps"
 
 [dev]
   command = "npm start"
