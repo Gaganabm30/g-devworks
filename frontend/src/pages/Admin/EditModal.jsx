@@ -49,7 +49,22 @@ const EditModal = ({ open, handleClose, data, handleChange, handleSubmit, type }
     const handleFileChange = (e, key) => {
         const file = e.target.files[0];
         if (file) {
-            handleChange({ target: { value: file } }, key);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Mocking the event object structure to reuse handleChange if possible, 
+                // but direct state update is cleaner. 
+                // Since handleChange expects an event, we need to manually call the parent's update logic
+                // OR better: we augment the parent to accept direct value updates OR we send a synthetic event.
+
+                // Constructing a synthetic event to pass to handleChange
+                const syntheticEvent = {
+                    target: {
+                        value: reader.result
+                    }
+                };
+                handleChange(syntheticEvent, key);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -113,7 +128,7 @@ const EditModal = ({ open, handleClose, data, handleChange, handleSubmit, type }
                                         InputProps={{ style: { color: 'white' } }}
                                     />
                                 </div>
-                                {data[key] && <ImagePreview src={typeof data[key] === 'object' ? URL.createObjectURL(data[key]) : data[key]} alt="Preview" />}
+                                {data[key] && <ImagePreview src={data[key]} alt="Preview" />}
                             </div>
                         );
                     }

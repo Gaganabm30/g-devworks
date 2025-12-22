@@ -80,9 +80,6 @@ const Projects = ({ openModal, setOpenModal }) => {
     <Container id="Projects">
       <Wrapper>
         <Title>Projects</Title>
-        <Desc>
-          Worked on beginner-level projects to apply concepts, improve skills, and gain hands-on experience.
-        </Desc>
         <CardContainer>
           {projects.map((project, index) => (
             <ProjectCard

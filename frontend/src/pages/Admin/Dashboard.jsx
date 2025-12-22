@@ -116,52 +116,18 @@ const Dashboard = () => {
 
     const handleSubmit = async () => {
         try {
-            let dataToSend = currentData;
-            // Check if any field is a File object
-            const hasFile = Object.values(currentData).some(val => val instanceof File);
-
-            if (hasFile) {
-                const formData = new FormData();
-                Object.keys(currentData).forEach(key => {
-                    // For arrays (like skills, tags), we might need special handling if backend expects array.
-                    // Append arrays as multiple entries with same key, or JSON stringify.
-                    // Backend for tags expects array. Multer might not handle simple array appending well if not configured.
-                    // But typically: formData.append('tags', tag) for each tag.
-                    // OR better: JSON.stringify for complex fields if backend parses "tags" from body.
-                    // My backend: new Project(projectData). Mongoose handles tags: [String].
-                    // If I send formData.append('tags', 'tag1, tag2'), it might be a single string.
-                    // Let's stick to simple key-value for now, and handle array specially if needed.
-                    // currentData.tags is array in my code (handleChange split it).
-
-                    if (key === 'tags' || key === 'skills') {
-                        // Send as JSON string for arrays to ensure structure, Backend needs to JSON.parse(req.body.tags) if it receives string.
-                        // BUT my backend does NOT parse JSON manually. It expects req.body to work.
-                        // express.urlencoded extended: true parses nested objects somewhat.
-                        // Simplest for now: Loop.
-                        if (Array.isArray(currentData[key])) {
-                            currentData[key].forEach(item => formData.append(key, item));
-                        } else {
-                            formData.append(key, currentData[key]);
-                        }
-                    } else {
-                        formData.append(key, currentData[key]);
-                    }
-                });
-                dataToSend = formData;
-            }
-
             if (currentType === 'Skill') {
-                if (currentData._id) await updateSkill(currentData._id, dataToSend);
-                else await addSkill(dataToSend);
+                if (currentData._id) await updateSkill(currentData._id, currentData);
+                else await addSkill(currentData);
             } else if (currentType === 'Achievement') {
-                if (currentData._id) await updateAchievement(currentData._id, dataToSend);
-                else await addAchievement(dataToSend);
+                if (currentData._id) await updateAchievement(currentData._id, currentData);
+                else await addAchievement(currentData);
             } else if (currentType === 'Project') {
-                if (currentData._id) await updateProject(currentData._id, dataToSend);
-                else await addProject(dataToSend);
+                if (currentData._id) await updateProject(currentData._id, currentData);
+                else await addProject(currentData);
             } else if (currentType === 'Education') {
-                if (currentData._id) await updateEducation(currentData._id, dataToSend);
-                else await addEducation(dataToSend);
+                if (currentData._id) await updateEducation(currentData._id, currentData);
+                else await addEducation(currentData);
             }
             fetchData();
             handleClose();

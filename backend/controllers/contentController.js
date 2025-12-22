@@ -53,11 +53,7 @@ exports.getAchievements = async (req, res) => {
 
 exports.addAchievement = async (req, res) => {
     try {
-        const achievementData = req.body;
-        if (req.file) {
-            achievementData.img = req.file.path;
-        }
-        const newAchievement = new Achievement(achievementData);
+        const newAchievement = new Achievement(req.body);
         const savedAchievement = await newAchievement.save();
         res.status(201).json(savedAchievement);
     } catch (error) {
@@ -76,11 +72,7 @@ exports.deleteAchievement = async (req, res) => {
 
 exports.updateAchievement = async (req, res) => {
     try {
-        const updateData = req.body;
-        if (req.file) {
-            updateData.img = req.file.path;
-        }
-        const updatedAchievement = await Achievement.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        const updatedAchievement = await Achievement.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updatedAchievement);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -99,11 +91,7 @@ exports.getProjects = async (req, res) => {
 
 exports.addProject = async (req, res) => {
     try {
-        const projectData = req.body;
-        if (req.file) {
-            projectData.image = req.file.path;
-        }
-        const newProject = new Project(projectData);
+        const newProject = new Project(req.body);
         const savedProject = await newProject.save();
         res.status(201).json(savedProject);
     } catch (error) {
@@ -122,11 +110,7 @@ exports.deleteProject = async (req, res) => {
 
 exports.updateProject = async (req, res) => {
     try {
-        const updateData = req.body;
-        if (req.file) {
-            updateData.image = req.file.path;
-        }
-        const updatedProject = await Project.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        const updatedProject = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updatedProject);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -145,11 +129,7 @@ exports.getEducation = async (req, res) => {
 
 exports.addEducation = async (req, res) => {
     try {
-        const educationData = req.body;
-        if (req.file) {
-            educationData.img = req.file.path;
-        }
-        const newEducation = new Education(educationData);
+        const newEducation = new Education(req.body);
         const savedEducation = await newEducation.save();
         res.status(201).json(savedEducation);
     } catch (error) {
@@ -168,11 +148,7 @@ exports.deleteEducation = async (req, res) => {
 
 exports.updateEducation = async (req, res) => {
     try {
-        const updateData = req.body;
-        if (req.file) {
-            updateData.img = req.file.path;
-        }
-        const updatedEducation = await Education.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        const updatedEducation = await Education.findByIdAndUpdate(req.params.id, req.body, { new: true });
         res.json(updatedEducation);
     } catch (error) {
         res.status(400).json({ message: error.message });

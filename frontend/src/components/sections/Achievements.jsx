@@ -67,9 +67,6 @@ const Achievements = () => {
     <Container id="Achievements">
       <Wrapper>
         <Title>Achievements</Title>
-        <Desc>
-          Earned certifications and badges by staying consistent in coding practice and learning new technologies.
-        </Desc>
 
         <VerticalTimeline>
           {achievements.map((achievement, index) => (
