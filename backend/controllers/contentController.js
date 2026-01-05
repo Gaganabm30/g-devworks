@@ -2,6 +2,26 @@ const Skill = require('../models/Skill');
 const Achievement = require('../models/Achievement');
 const Project = require('../models/Project');
 const Education = require('../models/Education');
+const cloudinary = require('../config/cloudinary');
+
+// Helper to handle image uploads
+const handleImageUpload = async (imageString) => {
+    if (!imageString) return '';
+    // Check if it's already a URL (e.g., from Cloudinary)
+    if (imageString.startsWith('http')) return imageString;
+
+    // It's a Base64 string, upload to Cloudinary
+    try {
+        const uploadResponse = await cloudinary.uploader.upload(imageString, {
+            upload_preset: 'ml_default', // Optional, can remove if not using presets
+            folder: 'portfolio',
+        });
+        return uploadResponse.secure_url;
+    } catch (error) {
+        console.error("Cloudinary Upload Error:", error);
+        throw new Error('Image upload failed');
+    }
+};
 
 // Skills
 exports.getSkills = async (req, res) => {
@@ -15,7 +35,21 @@ exports.getSkills = async (req, res) => {
 
 exports.addSkill = async (req, res) => {
     try {
-        const newSkill = new Skill(req.body);
+        const { skills, ...otherData } = req.body;
+
+        // Process images inside the 'skills' array
+        let processedSkills = [];
+        if (skills && Array.isArray(skills)) {
+            processedSkills = await Promise.all(skills.map(async (skill) => {
+                if (skill.image) {
+                    const imageUrl = await handleImageUpload(skill.image);
+                    return { ...skill, image: imageUrl };
+                }
+                return skill;
+            }));
+        }
+
+        const newSkill = new Skill({ ...otherData, skills: processedSkills });
         const savedSkill = await newSkill.save();
         res.status(201).json(savedSkill);
     } catch (error) {
@@ -34,7 +68,24 @@ exports.deleteSkill = async (req, res) => {
 
 exports.updateSkill = async (req, res) => {
     try {
-        const updatedSkill = await Skill.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { skills, ...otherData } = req.body;
+
+        let processedSkills = skills;
+        if (skills && Array.isArray(skills)) {
+            processedSkills = await Promise.all(skills.map(async (skill) => {
+                if (skill.image) {
+                    const imageUrl = await handleImageUpload(skill.image);
+                    return { ...skill, image: imageUrl };
+                }
+                return skill;
+            }));
+        }
+
+        const updatedSkill = await Skill.findByIdAndUpdate(
+            req.params.id,
+            { ...otherData, skills: processedSkills },
+            { new: true }
+        );
         res.json(updatedSkill);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -53,7 +104,11 @@ exports.getAchievements = async (req, res) => {
 
 exports.addAchievement = async (req, res) => {
     try {
-        const newAchievement = new Achievement(req.body);
+        let { img, ...otherData } = req.body;
+        if (img) {
+            img = await handleImageUpload(img);
+        }
+        const newAchievement = new Achievement({ ...otherData, img });
         const savedAchievement = await newAchievement.save();
         res.status(201).json(savedAchievement);
     } catch (error) {
@@ -72,7 +127,15 @@ exports.deleteAchievement = async (req, res) => {
 
 exports.updateAchievement = async (req, res) => {
     try {
-        const updatedAchievement = await Achievement.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        let { img, ...otherData } = req.body;
+        if (img) {
+            img = await handleImageUpload(img);
+        }
+        const updatedAchievement = await Achievement.findByIdAndUpdate(
+            req.params.id,
+            { ...otherData, img },
+            { new: true }
+        );
         res.json(updatedAchievement);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -91,7 +154,11 @@ exports.getProjects = async (req, res) => {
 
 exports.addProject = async (req, res) => {
     try {
-        const newProject = new Project(req.body);
+        let { image, ...otherData } = req.body;
+        if (image) {
+            image = await handleImageUpload(image);
+        }
+        const newProject = new Project({ ...otherData, image });
         const savedProject = await newProject.save();
         res.status(201).json(savedProject);
     } catch (error) {
@@ -110,7 +177,15 @@ exports.deleteProject = async (req, res) => {
 
 exports.updateProject = async (req, res) => {
     try {
-        const updatedProject = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        let { image, ...otherData } = req.body;
+        if (image) {
+            image = await handleImageUpload(image);
+        }
+        const updatedProject = await Project.findByIdAndUpdate(
+            req.params.id,
+            { ...otherData, image },
+            { new: true }
+        );
         res.json(updatedProject);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -129,7 +204,11 @@ exports.getEducation = async (req, res) => {
 
 exports.addEducation = async (req, res) => {
     try {
-        const newEducation = new Education(req.body);
+        let { img, ...otherData } = req.body;
+        if (img) {
+            img = await handleImageUpload(img);
+        }
+        const newEducation = new Education({ ...otherData, img });
         const savedEducation = await newEducation.save();
         res.status(201).json(savedEducation);
     } catch (error) {
@@ -148,7 +227,15 @@ exports.deleteEducation = async (req, res) => {
 
 exports.updateEducation = async (req, res) => {
     try {
-        const updatedEducation = await Education.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        let { img, ...otherData } = req.body;
+        if (img) {
+            img = await handleImageUpload(img);
+        }
+        const updatedEducation = await Education.findByIdAndUpdate(
+            req.params.id,
+            { ...otherData, img },
+            { new: true }
+        );
         res.json(updatedEducation);
     } catch (error) {
         res.status(400).json({ message: error.message });
