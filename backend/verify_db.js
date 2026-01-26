@@ -3,19 +3,12 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const connectDB = async () => {
-    try {
-        if (!process.env.MONGO_URI) {
-            throw new Error('MONGO_URI is not defined in .env file');
-        }
-        console.log('Attempting to connect to MongoDB...');
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log('MongoDB Connected Successfully!');
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('MongoDB Connected Successfully');
         process.exit(0);
-    } catch (err) {
-        console.error('MongoDB Connection Error:', err.message);
+    })
+    .catch(err => {
+        console.error('MongoDB Connection Failed', err);
         process.exit(1);
-    }
-};
-
-connectDB();
+    });

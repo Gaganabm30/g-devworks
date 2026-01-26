@@ -4,6 +4,8 @@ const Project = require('../models/Project');
 const Education = require('../models/Education');
 const cloudinary = require('../config/cloudinary');
 
+const { getCorrectedTimestamp } = require('../utils/timeUtils');
+
 // Helper to handle image uploads
 const handleImageUpload = async (imageString) => {
     if (!imageString) return '';
@@ -12,14 +14,15 @@ const handleImageUpload = async (imageString) => {
 
     // It's a Base64 string, upload to Cloudinary
     try {
+        const timestamp = await getCorrectedTimestamp();
         const uploadResponse = await cloudinary.uploader.upload(imageString, {
-            upload_preset: 'ml_default', // Optional, can remove if not using presets
-            folder: 'portfolio',
+            folder: 'portfolio_assets', // Updated folder to match migration
+            timestamp: timestamp // Fix for "stale request" error
         });
         return uploadResponse.secure_url;
     } catch (error) {
         console.error("Cloudinary Upload Error:", error);
-        throw new Error('Image upload failed');
+        throw new Error('Image upload failed: ' + error.message);
     }
 };
 
