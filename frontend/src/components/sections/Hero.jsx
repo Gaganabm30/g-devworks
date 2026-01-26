@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Bio } from "../../data/constants";
 import Typewriter from "typewriter-effect";
-import HeroImg from "../../images/gagu.jpeg";
+const HeroImg = "https://res.cloudinary.com/dw6jnhryf/image/upload/v1738047793/portfolio_assets/hero_image_gagu.jpg";
 import HeroBgAnimation from "../HeroBgAnimation";
 import { Tilt } from "react-tilt";
 import { motion } from "framer-motion";
