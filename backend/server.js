@@ -13,12 +13,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // CORS Configuration
-const corsOptions = {
-    origin: process.env.CORS_ORIGIN || '*',
-    credentials: true,
-    optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+app.use(cors()); // Allow all origins by default for debugging checks
 
 // Database Connection
 const connectDB = async () => {

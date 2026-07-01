@@ -9,20 +9,19 @@ const seedAdmin = async () => {
         const adminEmail = 'gagugagana01@gmail.com';
         const adminPassword = 'gagana12345';
 
-        const user = await User.findOne({ email: adminEmail });
+        // Remove all existing admin users to avoid duplicate key conflicts
+        await User.deleteMany({});
+        console.log('Cleared existing users');
 
-        if (user) {
-            user.password = adminPassword;
-            await user.save();
-            console.log('Admin user updated successfully');
-        } else {
-            await User.create({
-                email: adminEmail,
-                password: adminPassword,
-                role: 'admin',
-            });
-            console.log('Admin user created successfully');
-        }
+        // Create fresh admin user
+        await User.create({
+            email: adminEmail,
+            password: adminPassword,
+            role: 'admin',
+        });
+        console.log('✅ Admin user created:');
+        console.log('   Email   :', adminEmail);
+        console.log('   Password:', adminPassword);
     } catch (error) {
         console.error('Error seeding admin:', error);
         throw error;

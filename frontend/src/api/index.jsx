@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api' });
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api' });
 
 API.interceptors.request.use((req) => {
     if (localStorage.getItem('token')) {
@@ -39,3 +39,9 @@ export const deleteEducation = (id) => API.delete(`/education/${id}`);
 export const postContactMessage = (message) => API.post('/messages', message);
 export const getContactMessages = () => API.get('/messages');
 export const deleteContactMessage = (id) => API.delete(`/messages/${id}`);
+
+// Resume
+export const getResume = () => API.get('/resume');
+export const addResume = (resume) => API.post('/resume', resume);
+export const updateResume = (id, resume) => API.put(`/resume/${id}`, resume);
+export const deleteResume = (id) => API.delete(`/resume/${id}`);

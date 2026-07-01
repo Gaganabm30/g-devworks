@@ -6,7 +6,8 @@ import {
     getAchievements, addAchievement, updateAchievement, deleteAchievement,
     getProjects, addProject, updateProject, deleteProject,
     getEducation, addEducation, updateEducation, deleteEducation,
-    getContactMessages, deleteContactMessage
+    getContactMessages, deleteContactMessage,
+    getResume, addResume, updateResume, deleteResume
 } from '../../api';
 import EditModal from './EditModal';
 import { Delete, Edit } from '@mui/icons-material';
@@ -63,9 +64,11 @@ const Dashboard = () => {
     const [projects, setProjects] = useState([]);
     const [education, setEducation] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [resumes, setResumes] = useState([]);
     const [open, setOpen] = useState(false);
     const [currentData, setCurrentData] = useState({});
     const [currentType, setCurrentType] = useState('');
+    const [uploading, setUploading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -90,6 +93,8 @@ const Dashboard = () => {
             setEducation(eduRes.data);
             const msgRes = await getContactMessages();
             setMessages(msgRes.data);
+            const resumeRes = await getResume();
+            setResumes(resumeRes.data);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -116,6 +121,7 @@ const Dashboard = () => {
 
     const handleSubmit = async () => {
         try {
+            setUploading(true);
             if (currentType === 'Skill') {
                 if (currentData._id) await updateSkill(currentData._id, currentData);
                 else await addSkill(currentData);
@@ -128,12 +134,17 @@ const Dashboard = () => {
             } else if (currentType === 'Education') {
                 if (currentData._id) await updateEducation(currentData._id, currentData);
                 else await addEducation(currentData);
+            } else if (currentType === 'Resume') {
+                if (currentData._id) await updateResume(currentData._id, currentData);
+                else await addResume(currentData);
             }
             fetchData();
             handleClose();
         } catch (error) {
             console.error("Error saving data:", error);
             alert(`Failed to save data: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -145,6 +156,7 @@ const Dashboard = () => {
                 else if (type === 'Project') await deleteProject(id);
                 else if (type === 'Education') await deleteEducation(id);
                 else if (type === 'Message') await deleteContactMessage(id);
+                else if (type === 'Resume') await deleteResume(id);
                 fetchData();
             } catch (error) {
                 console.error("Error deleting data:", error);
@@ -163,6 +175,39 @@ const Dashboard = () => {
                 <h1>Admin Dashboard</h1>
                 <AddButton onClick={handleLogout} style={{ backgroundColor: 'red', marginBottom: 0 }}>Logout</AddButton>
             </div>
+
+            {/* ─── Resume Section (TOP) ─── */}
+            <Section style={{ border: '1px solid #854ce6', borderRadius: '12px', padding: '20px', background: 'rgba(133,76,230,0.05)' }}>
+                <SectionTitle style={{ color: '#854ce6' }}>📄 Resume</SectionTitle>
+                {resumes.length === 0 ? (
+                    <div>
+                        <p style={{ color: 'gray', marginBottom: '15px' }}>No resume uploaded yet. Add a PDF file or paste a link below.</p>
+                        <AddButton onClick={() => handleOpen('Resume', { resumeUrl: '' })}>+ Add Resume</AddButton>
+                    </div>
+                ) : (
+                    <CardGrid>
+                        {resumes.map((res) => (
+                            <Card key={res._id} style={{ borderLeft: '4px solid #854ce6' }}>
+                                <h3 style={{ marginBottom: '10px' }}>✅ Active Resume</h3>
+                                <p style={{ wordBreak: 'break-all', marginBottom: '40px' }}>
+                                    <strong>URL: </strong>
+                                    <a href={res.resumeUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#854ce6', textDecoration: 'underline' }}>
+                                        {res.resumeUrl.length > 60 ? res.resumeUrl.substring(0, 60) + '...' : res.resumeUrl}
+                                    </a>
+                                </p>
+                                <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '4px' }}>
+                                    <IconButton onClick={() => handleOpen('Resume', res)} color="primary" title="Edit Resume"><Edit /></IconButton>
+                                    <IconButton onClick={() => handleDelete('Resume', res._id)} color="error" title="Delete Resume"><Delete /></IconButton>
+                                </div>
+                                <a href={res.resumeUrl} target="_blank" rel="noopener noreferrer"
+                                    style={{ display: 'inline-block', marginTop: '8px', padding: '8px 16px', background: '#854ce6', color: 'white', borderRadius: '5px', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}>
+                                    Preview Resume ↗
+                                </a>
+                            </Card>
+                        ))}
+                    </CardGrid>
+                )}
+            </Section>
 
             {/* Messages Section */}
             <Section>
@@ -185,7 +230,7 @@ const Dashboard = () => {
                     {messages.length === 0 && <p>No messages yet.</p>}
                 </CardGrid>
             </Section>
-
+ 
             {/* Achievements Section */}
             <Section>
                 <SectionTitle>Achievements</SectionTitle>
@@ -270,6 +315,7 @@ const Dashboard = () => {
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
                 type={currentType}
+                uploading={uploading}
             />
         </DashboardContainer>
     );

@@ -29,8 +29,9 @@ const ImagePreview = styled.img`
     margin-top: 10px;
 `;
 
-const EditModal = ({ open, handleClose, data, handleChange, handleSubmit, type }) => {
+const EditModal = ({ open, handleClose, data, handleChange, handleSubmit, type, uploading }) => {
     const [currentSkill, setCurrentSkill] = React.useState({ name: '', image: '' });
+    const [selectedPdfName, setSelectedPdfName] = React.useState('');
 
     const handleAddSkill = () => {
         if (currentSkill.name && currentSkill.image) {
@@ -133,6 +134,81 @@ const EditModal = ({ open, handleClose, data, handleChange, handleSubmit, type }
                         );
                     }
 
+                    // Resume Upload
+                    if (key === 'resumeUrl') {
+                        return (
+                            <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ color: '#854ce6', fontSize: '13px', fontWeight: 'bold' }}>📄 Resume (Upload PDF or Paste Link)</label>
+
+                                {/* File Upload Row */}
+                                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                    <input
+                                        accept="application/pdf"
+                                        style={{ display: 'none' }}
+                                        id={`raised-button-file-${key}`}
+                                        type="file"
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                setSelectedPdfName(file.name);
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    handleChange({ target: { value: reader.result } }, key);
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                    />
+                                    <label htmlFor={`raised-button-file-${key}`}>
+                                        <Button variant="contained" component="span" size="small"
+                                            style={{ background: '#854ce6', whiteSpace: 'nowrap' }}>
+                                            📁 Choose PDF
+                                        </Button>
+                                    </label>
+                                    {selectedPdfName && (
+                                        <span style={{ color: '#90caf9', fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }}>
+                                            ✅ {selectedPdfName}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Divider */}
+                                <div style={{ color: 'gray', fontSize: '12px', textAlign: 'center' }}>— OR paste a direct link —</div>
+
+                                {/* URL Input */}
+                                <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    placeholder="https://your-resume-link.com/resume.pdf"
+                                    value={data[key] && data[key].startsWith('data:') ? '' : (data[key] || '')}
+                                    onChange={(e) => {
+                                        setSelectedPdfName('');
+                                        handleChange(e, key);
+                                    }}
+                                    fullWidth
+                                    InputLabelProps={{ style: { color: 'gray' } }}
+                                    InputProps={{ style: { color: 'white' } }}
+                                />
+
+                                {/* Status */}
+                                {data[key] && (
+                                    <div style={{ background: '#1a1a2e', border: '1px solid #854ce6', padding: '10px', borderRadius: '5px', fontSize: '13px' }}>
+                                        {data[key].startsWith('data:') ? (
+                                            <span style={{ color: '#90caf9' }}>📄 PDF selected — click <strong>Save</strong> to upload to cloud</span>
+                                        ) : (
+                                            <span style={{ color: 'white' }}>
+                                                🔗 Current: <a href={data[key]} target="_blank" rel="noopener noreferrer"
+                                                    style={{ color: '#854ce6', textDecoration: 'underline', wordBreak: 'break-all' }}>
+                                                    {data[key]}
+                                                </a>
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    }
+
                     // Text Area for descriptions
                     if (key === 'desc' || key === 'description') {
                         return (
@@ -229,8 +305,15 @@ const EditModal = ({ open, handleClose, data, handleChange, handleSubmit, type }
                     </div>
                 )}
 
-                <Button variant="contained" color="primary" onClick={handleSubmit} size="large" style={{ marginTop: '10px' }}>
-                    Save Item
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSubmit}
+                    size="large"
+                    disabled={uploading}
+                    style={{ marginTop: '10px', background: uploading ? '#555' : undefined }}
+                >
+                    {uploading ? '⏳ Uploading to cloud...' : 'Save'}
                 </Button>
             </ModalContainer>
         </Modal>

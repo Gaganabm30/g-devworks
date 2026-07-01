@@ -2,6 +2,7 @@ const Skill = require('../models/Skill');
 const Achievement = require('../models/Achievement');
 const Project = require('../models/Project');
 const Education = require('../models/Education');
+const Resume = require('../models/Resume');
 const cloudinary = require('../config/cloudinary');
 
 const { getCorrectedTimestamp } = require('../utils/timeUtils');
@@ -268,6 +269,86 @@ exports.deleteMessage = async (req, res) => {
     try {
         await require('../models/Message').findByIdAndDelete(req.params.id);
         res.json({ message: 'Message deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Resume CRUD
+exports.getResume = async (req, res) => {
+    try {
+        const resumes = await Resume.find();
+        // Return without the raw base64 data — just the _id, timestamps, and a flag
+        const result = resumes.map(r => {
+            const obj = r.toObject();
+            const isPdf = obj.resumeUrl && obj.resumeUrl.startsWith('data:');
+            return {
+                _id: obj._id,
+                // If stored as base64, return a backend view URL; otherwise return the URL as-is
+                resumeUrl: isPdf ? `http://localhost:5000/api/resume/view/${obj._id}` : obj.resumeUrl,
+                createdAt: obj.createdAt,
+                updatedAt: obj.updatedAt
+            };
+        });
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Serve the PDF directly from MongoDB with proper Content-Type
+exports.viewResume = async (req, res) => {
+    try {
+        const resume = await Resume.findById(req.params.id);
+        if (!resume || !resume.resumeUrl) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+        if (!resume.resumeUrl.startsWith('data:')) {
+            // It's an external URL, redirect to it
+            return res.redirect(resume.resumeUrl);
+        }
+        // Decode base64 and stream as PDF
+        const base64Data = resume.resumeUrl.split(',')[1];
+        const pdfBuffer = Buffer.from(base64Data, 'base64');
+        res.set('Content-Type', 'application/pdf');
+        res.set('Content-Disposition', 'inline; filename="resume.pdf"');
+        res.set('Content-Length', pdfBuffer.length);
+        res.send(pdfBuffer);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.addResume = async (req, res) => {
+    try {
+        let { resumeUrl } = req.body;
+        // Store base64 directly in DB; no Cloudinary for PDFs
+        const newResume = new Resume({ resumeUrl });
+        const savedResume = await newResume.save();
+        res.status(201).json(savedResume);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+exports.updateResume = async (req, res) => {
+    try {
+        let { resumeUrl } = req.body;
+        const updatedResume = await Resume.findByIdAndUpdate(
+            req.params.id,
+            { resumeUrl },
+            { new: true }
+        );
+        res.json(updatedResume);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+exports.deleteResume = async (req, res) => {
+    try {
+        await Resume.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Resume deleted' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -21,6 +21,11 @@ const {
     getMessages,
     addMessage,
     deleteMessage,
+    getResume,
+    addResume,
+    deleteResume,
+    updateResume,
+    viewResume,
 } = require('../controllers/contentController');
 
 // Skills
@@ -51,5 +56,12 @@ router.delete('/projects/:id', protect, deleteProject);
 router.get('/messages', protect, getMessages);
 router.post('/messages', addMessage); // Public access to send
 router.delete('/messages/:id', protect, deleteMessage);
+
+// Resume
+router.get('/resume', getResume);
+router.get('/resume/view/:id', viewResume); // Public: serves PDF bytes directly
+router.post('/resume', protect, addResume);
+router.put('/resume/:id', protect, updateResume);
+router.delete('/resume/:id', protect, deleteResume);
 
 module.exports = router;

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Bio } from "../../data/constants";
+import { getResume } from "../../api";
 import Typewriter from "typewriter-effect";
 const HeroImg = "https://res.cloudinary.com/dw6jnhryf/image/upload/v1738047793/portfolio_assets/hero_image_gagu.jpg";
 import HeroBgAnimation from "../HeroBgAnimation";
@@ -130,7 +131,7 @@ const SubTitle = styled.div`
   }
 `;
 
-const ResumeButton = styled.a`
+const ResumeButton = styled.button`
   -webkit-appearance: button;
   -moz-appearance: button;
   appearance: button;
@@ -158,6 +159,8 @@ const ResumeButton = styled.a`
     hsla(294, 100%, 50%, 1) 100%
   );
   box-shadow: 20px 20px 60px #1f2634, -20px -20px 60px #1f2634;
+  border: none;
+  cursor: pointer;
   border-radius: 50px;
   font-weight: 600;
   font-size: 20px;
@@ -219,6 +222,20 @@ const HeroBg = styled.div`
 `;
 
 const Hero = () => {
+  const [resumeUrl, setResumeUrl] = useState(Bio.resume);
+
+  useEffect(() => {
+    getResume()
+      .then((res) => {
+        if (res.data && res.data.length > 0 && res.data[0].resumeUrl) {
+          setResumeUrl(res.data[0].resumeUrl);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching resume:", err);
+      });
+  }, []);
+
   return (
     <div id="About">
       <HeroContainer>
@@ -252,7 +269,17 @@ const Hero = () => {
                 <SubTitle>{Bio.description}</SubTitle>
               </motion.div>
 
-              <ResumeButton href={Bio.resume} target="_blank">
+              <ResumeButton
+                onClick={() => {
+                  if (!resumeUrl) return;
+                  // Fix old Cloudinary image/upload PDF URLs → raw/upload
+                  let url = resumeUrl;
+                  if (url.includes('res.cloudinary.com') && url.includes('/image/upload/') && url.endsWith('.pdf')) {
+                    url = url.replace('/image/upload/', '/raw/upload/');
+                  }
+                  window.open(url, '_blank');
+                }}
+              >
                 Check Resume
               </ResumeButton>
             </HeroLeftContainer>
