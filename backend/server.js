@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { startKeepAlive } = require('./utils/keepAlive');
 
 dotenv.config();
 
@@ -42,4 +43,7 @@ app.get('/', (req, res) => {
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+
+    // Start keep-alive service to prevent Render from spinning down
+    startKeepAlive();
 });
