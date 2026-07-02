@@ -278,14 +278,15 @@ exports.deleteMessage = async (req, res) => {
 exports.getResume = async (req, res) => {
     try {
         const resumes = await Resume.find();
-        // Return without the raw base64 data — just the _id, timestamps, and a flag
+        // Build the base URL dynamically so it works on any host (Render, localhost, etc.)
+        const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
         const result = resumes.map(r => {
             const obj = r.toObject();
             const isPdf = obj.resumeUrl && obj.resumeUrl.startsWith('data:');
             return {
                 _id: obj._id,
                 // If stored as base64, return a backend view URL; otherwise return the URL as-is
-                resumeUrl: isPdf ? `http://localhost:5000/api/resume/view/${obj._id}` : obj.resumeUrl,
+                resumeUrl: isPdf ? `${baseUrl}/api/resume/view/${obj._id}` : obj.resumeUrl,
                 createdAt: obj.createdAt,
                 updatedAt: obj.updatedAt
             };
