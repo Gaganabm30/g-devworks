@@ -278,14 +278,14 @@ exports.deleteMessage = async (req, res) => {
 exports.getResume = async (req, res) => {
     try {
         const resumes = await Resume.find();
-        // Build the base URL dynamically so it works on any host (Render, localhost, etc.)
+        // Build the base URL dynamically (fallback for legacy base64 entries)
         const baseUrl = process.env.BACKEND_URL || `${req.protocol}://${req.get('host')}`;
         const result = resumes.map(r => {
             const obj = r.toObject();
+            // Legacy: if still stored as base64, serve via the view endpoint
             const isPdf = obj.resumeUrl && obj.resumeUrl.startsWith('data:');
             return {
                 _id: obj._id,
-                // If stored as base64, return a backend view URL; otherwise return the URL as-is
                 resumeUrl: isPdf ? `${baseUrl}/api/resume/view/${obj._id}` : obj.resumeUrl,
                 createdAt: obj.createdAt,
                 updatedAt: obj.updatedAt
@@ -297,7 +297,7 @@ exports.getResume = async (req, res) => {
     }
 };
 
-// Serve the PDF directly from MongoDB with proper Content-Type
+// Serve the PDF directly from MongoDB with proper Content-Type (legacy base64 support)
 exports.viewResume = async (req, res) => {
     try {
         const resume = await Resume.findById(req.params.id);
@@ -305,7 +305,7 @@ exports.viewResume = async (req, res) => {
             return res.status(404).json({ message: 'Resume not found' });
         }
         if (!resume.resumeUrl.startsWith('data:')) {
-            // It's an external URL, redirect to it
+            // It's an external URL (e.g. Cloudinary), redirect to it
             return res.redirect(resume.resumeUrl);
         }
         // Decode base64 and stream as PDF
@@ -320,10 +320,25 @@ exports.viewResume = async (req, res) => {
     }
 };
 
+// Helper: upload a base64 PDF to Cloudinary and return the secure URL
+const uploadPdfToCloudinary = async (base64String) => {
+    const timestamp = await getCorrectedTimestamp();
+    const uploadResponse = await cloudinary.uploader.upload(base64String, {
+        folder: 'portfolio_assets',
+        resource_type: 'raw',   // required for non-image files (PDFs)
+        format: 'pdf',
+        timestamp,
+    });
+    return uploadResponse.secure_url;
+};
+
 exports.addResume = async (req, res) => {
     try {
         let { resumeUrl } = req.body;
-        // Store base64 directly in DB; no Cloudinary for PDFs
+        // If it's a base64 PDF, upload to Cloudinary so the link works on any device
+        if (resumeUrl && resumeUrl.startsWith('data:')) {
+            resumeUrl = await uploadPdfToCloudinary(resumeUrl);
+        }
         const newResume = new Resume({ resumeUrl });
         const savedResume = await newResume.save();
         res.status(201).json(savedResume);
@@ -335,6 +350,10 @@ exports.addResume = async (req, res) => {
 exports.updateResume = async (req, res) => {
     try {
         let { resumeUrl } = req.body;
+        // If it's a base64 PDF, upload to Cloudinary
+        if (resumeUrl && resumeUrl.startsWith('data:')) {
+            resumeUrl = await uploadPdfToCloudinary(resumeUrl);
+        }
         const updatedResume = await Resume.findByIdAndUpdate(
             req.params.id,
             { resumeUrl },
